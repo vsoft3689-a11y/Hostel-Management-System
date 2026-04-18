@@ -6,9 +6,8 @@ export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);
 
   const fetchBookings = async () => {
-    const res = await API.get("/bookings");
+    const res = await API.get("/admin/bookings");
     setBookings(res.data);
-    console.log(res.data);
   };
 
   useEffect(() => {
@@ -16,7 +15,7 @@ export default function AdminBookings() {
   }, []);
 
   const approveBooking = async (id) => {
-    await API.post(`/bookings/approve/${id}`);
+    await API.post(`/admin/bookings/approve/${id}`);
     fetchBookings();
   };
 

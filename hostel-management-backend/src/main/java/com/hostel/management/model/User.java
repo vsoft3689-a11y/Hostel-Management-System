@@ -18,5 +18,6 @@ public class User {
     private String email;
     private String phone;
     private String password;
-    private String role="user"; // admin or user
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

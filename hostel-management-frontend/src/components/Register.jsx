@@ -14,7 +14,7 @@ export default function Register() {
 
   useEffect(() => {
     if (token) {
-      if (role === "admin") {
+      if (role === "ADMIN") {
         navigate("/admin", { replace: true });
       } else {
         navigate("/user", { replace: true });
@@ -28,7 +28,7 @@ export default function Register() {
     }
 
     try {
-      await API.post("/users/register", { name, email, phone, password });
+      await API.post("/auth/register", { name, email, phone, password });
       alert("Registered successfully!");
       navigate("/login");
     } catch (error) {

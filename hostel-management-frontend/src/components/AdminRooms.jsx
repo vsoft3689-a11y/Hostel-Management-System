@@ -21,8 +21,6 @@ export default function AdminRooms() {
   const fetchRooms = async () => {
     const res = await API.get("/rooms");
     setRooms(res.data);
-  console.log(res.data)
-
   };
 
   useEffect(() => {
@@ -32,7 +30,7 @@ export default function AdminRooms() {
   const addRoom = async () => {
     if (!roomNo || fee <= 0 || capacity <= 0)
       return alert("Please fill valid details");
-    await API.post("/rooms/add", {
+    await API.post("/admin/rooms/add", {
       roomNo,
       capacity,
       feePerMonth: fee,
@@ -53,7 +51,7 @@ export default function AdminRooms() {
 
   const deleteRoom = async (id) => {
     if (window.confirm("Are you sure you want to delete this room?")) {
-      await API.delete(`/rooms/delete/${id}`);
+      await API.delete(`/admin/rooms/delete/${id}`);
       fetchRooms();
     }
   };
@@ -75,13 +73,13 @@ export default function AdminRooms() {
   const saveEdit = async (id) => {
     if (!editRoomNo || editCapacity <= 0 || editFee <= 0)
       return alert("Enter valid details");
-    await API.put(`/rooms/update/${id}`, {
+    await API.put(`/admin/rooms/update/${id}`, {
       roomNo: editRoomNo,
       capacity: editCapacity,
       feePerMonth: editFee,
       type: editRoomType,
       floor: editRoomFloor,
-      roomImage:editRoomImage
+      roomImage: editRoomImage,
     });
     setEditingRoomId(null);
     fetchRooms();
@@ -91,10 +89,9 @@ export default function AdminRooms() {
     <div className="adminrooms-container">
       <div className="adminrooms-card">
         <h2 className="adminrooms-title">Manage Rooms</h2>
-
         <div className="adminrooms-form">
           <div className="adminrooms-left">
-          <label htmlFor="">Room No </label>
+            <label htmlFor="">Room No </label>
             <input
               placeholder="Room No"
               value={roomNo}
@@ -110,7 +107,7 @@ export default function AdminRooms() {
               onChange={(e) => setRoomImage(e.target.value)}
               className="adminrooms-input"
             />
-            
+
             <label htmlFor=""> Capacity </label>
             <input
               type="number"
@@ -119,7 +116,6 @@ export default function AdminRooms() {
               onChange={(e) => setCapacity(e.target.value)}
               className="adminrooms-input"
             />
-
           </div>
 
           <div className="adminrooms-right">
@@ -146,7 +142,7 @@ export default function AdminRooms() {
               <option value="single">Single</option>
               <option value="double">Double</option>
             </select>
-        
+
             <label htmlFor=""> Fee </label>
             <input
               type="number"
@@ -155,15 +151,13 @@ export default function AdminRooms() {
               onChange={(e) => setFee(e.target.value)}
               className="adminrooms-input"
             />
-
           </div>
-        </div> <br />
-            <button onClick={addRoom} className="adminrooms-button">
-              ➕ Add Room
-            </button>
-
+        </div>{" "}
+        <br />
+        <button onClick={addRoom} className="adminrooms-button">
+          ➕ Add Room
+        </button>
         <h3 className="adminrooms-subtitle">Room List</h3>
-
         <div className="adminrooms-table-container">
           {rooms.length === 0 ? (
             <p className="no-data">No rooms available</p>
@@ -262,7 +256,9 @@ export default function AdminRooms() {
                       </>
                     ) : (
                       <>
-                        <td><img src={r.roomImage} alt="Image" width={100}/></td>
+                        <td>
+                          <img src={r.roomImage} alt="Image" width={100} />
+                        </td>
                         <td>{r.roomNo}</td>
                         <td>{r.type}</td>
                         <td>{r.floor}</td>

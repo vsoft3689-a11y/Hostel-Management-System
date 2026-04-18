@@ -16,6 +16,6 @@ public class Complaint {
     private User user;
 
     private String description;
-    private String status = "pending"; // pending, resolved
+    private String status; // pending, resolved
     private LocalDate dateSubmitted;
 }

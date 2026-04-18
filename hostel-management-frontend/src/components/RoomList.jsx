@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import API from "../api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 import { AuthContext } from "./AuthContext";
 
@@ -8,12 +8,16 @@ export default function RoomList() {
   const [rooms, setRooms] = useState([]);
   const [bookings, setBookings] = useState([]);
   const { token, role } = useContext(AuthContext);
-  const userId = token;
+  const navigate = useNavigate();
 
-  console.log(typeof userId);
   const fetchBookings = async () => {
-    const res = await API.get("/bookings");
-    setBookings(res.data.filter((b) => b.user.id == userId));
+    if (!token) return;
+    try {
+      const res = await API.get("/bookings/my");
+      setBookings(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -21,10 +25,24 @@ export default function RoomList() {
   }, []);
 
   useEffect(() => {
-    API.get("/rooms").then((res) => {
-      setRooms(res.data);
-    });
+    try {
+      API.get("/rooms").then((res) => {
+        setRooms(res.data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
+
+  const handleBook = (id) => {
+    if (!token) {
+      sessionStorage.setItem("redirectAfterLogin", `/users/book/${id}`);
+      alert("Please login to book a room.");
+      navigate("/login", { replace: true }); // use replace to avoid login page in history
+      return;
+    }
+    navigate(`/users/book/${id}`);
+  };
 
   return (
     <div className="roomlist-container">
@@ -34,9 +52,7 @@ export default function RoomList() {
           <p className="no-data">No rooms available</p>
         ) : (
           rooms.map((r) => {
-            const booking = bookings.find(
-              (b) => b.room.id === r.id && b.user.id === parseInt(userId)
-            );
+            const booking = bookings.find((b) => b.room.id === r.id);
 
             return (
               <div key={r.id} className="room-card">
@@ -50,22 +66,37 @@ export default function RoomList() {
                 </div>
                 <br />
                 <p>
-                  <strong>Room No:</strong><span style={{textTransform:"capitalize"}}> {r.roomNo}</span>
+                  <strong>Room No:</strong>
+                  <span style={{ textTransform: "capitalize" }}>
+                    {" "}
+                    {r.roomNo}
+                  </span>
                 </p>
                 <p>
-                  <strong>Room Type:</strong><span style={{textTransform:"capitalize"}}> {r.type}</span>
+                  <strong>Room Type:</strong>
+                  <span style={{ textTransform: "capitalize" }}> {r.type}</span>
                 </p>
                 <p>
-                  <strong>Floor:</strong><span style={{textTransform:"capitalize"}}> {r.floor}</span>
+                  <strong>Floor:</strong>
+                  <span style={{ textTransform: "capitalize" }}>
+                    {" "}
+                    {r.floor}
+                  </span>
                 </p>
                 <p>
-                  <strong>Capacity:</strong><span> {r.capacity}</span>
+                  <strong>Capacity:</strong>
+                  <span> {r.capacity}</span>
                 </p>
                 <p>
-                  <strong>Occupied:</strong><span> {r.occupied}</span>
+                  <strong>Occupied:</strong>
+                  <span> {r.occupied}</span>
                 </p>
                 <p>
-                  <strong>Fee:</strong><span style={{fontWeight:"bolder"}}> ₹{r.feePerMonth}</span>
+                  <strong>Fee:</strong>
+                  <span style={{ fontWeight: "bolder" }}>
+                    {" "}
+                    ₹{r.feePerMonth}
+                  </span>
                 </p>
                 <p>
                   <strong>Status: </strong>
@@ -83,7 +114,7 @@ export default function RoomList() {
                   </span>
                 </p>
                 {/* Show buttons only if user is not admin */}
-                {role !== "admin" && (
+                {role !== "ADMIN" && (
                   <>
                     {booking ? (
                       // Already booked
@@ -117,9 +148,15 @@ export default function RoomList() {
                       </div>
                     ) : r.status !== "full" ? (
                       // Available to book
-                      <Link to={`/users/book/${r.id}`} className="book-btn">
+                      // <Link to={`/users/book/${r.id}`} className="book-btn">
+                      //   Book Now
+                      // </Link>
+                      <button
+                        onClick={() => handleBook(r.id)}
+                        className="book-btn"
+                      >
                         Book Now
-                      </Link>
+                      </button>
                     ) : (
                       // Full room
                       <button

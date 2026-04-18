@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
 export default function Home() {
-  const { token, role } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
   return (

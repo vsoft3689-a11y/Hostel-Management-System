@@ -14,29 +14,14 @@ public class HostelInfoController {
     @Autowired
     private HostelInfoRepository hostelInfoRepository;
 
-    // Add new item
-    @PostMapping("/add")
-    public HostelInfo addInfo(@RequestBody HostelInfo info) {
-        return hostelInfoRepository.save(info);
+    // Get Hostel Info
+    @GetMapping
+    public List<HostelInfo> getHostelInfo()
+    {
+        return hostelInfoRepository.findAll();
     }
 
-    // Update existing item
-    @PutMapping("/update/{id}")
-    public HostelInfo updateInfo(@PathVariable Long id, @RequestBody HostelInfo info) {
-        HostelInfo existing = hostelInfoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
-        existing.setType(info.getType());
-        existing.setData(info.getData());
-        return hostelInfoRepository.save(existing);
-    }
-    
-    // Delete item
-    @DeleteMapping("/delete/{id}")
-    public String deleteInfo(@PathVariable Long id) {
-        hostelInfoRepository.deleteById(id);
-        return "Deleted successfully";
-    }
-
+    // Get Hostel details based on type
     @GetMapping("/{type}")
     public List<HostelInfo> getByType(@PathVariable String type) {
         return hostelInfoRepository.findByType(type);

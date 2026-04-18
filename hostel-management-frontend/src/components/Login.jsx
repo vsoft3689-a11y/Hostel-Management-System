@@ -13,7 +13,7 @@ export default function Login() {
 
   useEffect(() => {
     if (token) {
-      if (role === "admin") {
+      if (role === "ADMIN") {
         navigate("/admin", { replace: true });
       } else {
         navigate("/users", { replace: true });
@@ -24,22 +24,21 @@ export default function Login() {
   const handleLogin = async () => {
     if (!email || !password) return alert("Please fill all fields!");
     try {
-      const res = await API.post("/users/login", { email, password });
+      const res = await API.post("/auth/login", { email, password });
       if (!res.data) return alert("Invalid credentials");
-
-      login(res.data.id, res.data.role);
+      login(res.data.token, res.data.role);
 
       // Get redirect path
       const redirectPath = sessionStorage.getItem("redirectAfterLogin");
 
-      if (res.data.role === "user") {
+      if (res.data.role === "USER") {
         if (redirectPath) {
           sessionStorage.removeItem("redirectAfterLogin");
           return navigate(redirectPath, { replace: true });
         } else {
           return navigate("/users", { replace: true }); 
         }
-      } else if (res.data.role === "admin") {
+      } else if (res.data.role === "ADMIN") {
         return navigate("/admin", { replace: true });
       }
 

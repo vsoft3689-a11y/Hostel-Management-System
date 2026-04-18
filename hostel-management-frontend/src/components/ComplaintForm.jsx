@@ -1,20 +1,16 @@
 import { useState, useEffect, useContext } from "react";
 import API from "../api";
 import "../App.css";
-import { AuthContext } from "./AuthContext";
 
 export default function ComplaintForm() {
   const [description, setDescription] = useState("");
   const [complaints, setComplaints] = useState([]);
-  // const userId = localStorage.getItem("userId");
-  const { token, role } = useContext(AuthContext);
-  const userId = token;
 
   // Fetch complaints for current user
   const fetchComplaints = async () => {
     try {
-      const res = await API.get("/complaints");
-      setComplaints(res.data.filter((c) => c.user.id ===parseInt(userId)));
+      const res = await API.get("/complaints/my");
+      setComplaints(res.data);
     } catch (err) {
       console.error("Error fetching complaints:", err);
     }
@@ -32,7 +28,6 @@ export default function ComplaintForm() {
 
     try {
       await API.post("/complaints", {
-        user: { id: userId },
         description,
       });
 

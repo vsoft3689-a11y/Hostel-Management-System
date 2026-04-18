@@ -35,7 +35,7 @@ const Navbar = () => {
       <div className={`navbar-buttons ${menuOpen ? "active" : ""}`}>
         {token ? (
           <>
-            {role === "admin" ? (
+            {role === "ADMIN" ? (
               <Link
                 to={"/admin"}
                 className="btn register-btn"

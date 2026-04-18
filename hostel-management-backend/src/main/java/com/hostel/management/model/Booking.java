@@ -21,6 +21,6 @@ public class Booking {
     private LocalDate startDate;
     private LocalDate endDate;
     private double amount;
-    private String status = "pending"; // pending,approved,rejected
-    private String paymentStatus = "unpaid"; // paid, unpaid
+    private String status;// pending,approved,rejected
+    private String paymentStatus; // paid, unpaid
 }

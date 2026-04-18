@@ -1,23 +1,34 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
 import API from "../api";
 import "../App.css";
+import { AuthContext } from "./AuthContext";
 
 export default function BookingForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { token, role } = useContext(AuthContext);
-  const userId = token;
-  console.log(userId);
+  const { token } = useContext(AuthContext);
 
   const [room, setRoom] = useState(null);
   const [duration, setDuration] = useState(1);
   const [amount, setAmount] = useState(0);
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState("");
+
+  useEffect(() => {
+    // if (!token) {
+    //   sessionStorage.setItem("redirectAfterLogin", `/users/book/${id}`);
+    //   alert("Please login to book a room.");
+    //   navigate("/login", { replace: true }); // use replace to avoid login page in history
+    // }else if (!id) {
+    //   alert("Invalid room ID");
+    //   navigate("/rooms");
+    // }else {
+      sessionStorage.removeItem("redirectAfterLogin");
+    // }
+  }, [token, id, navigate]);
 
   // Fetch room details
   useEffect(() => {
@@ -49,19 +60,18 @@ export default function BookingForm() {
   }, [room, duration]);
 
   const handleBook = async () => {
-    if (!userId) {
-      sessionStorage.setItem("redirectAfterLogin", `/users/book/${id}`);
-      alert("Please login to book a room.");
-      navigate("/login", { replace: true }); // use replace to avoid login page in history
-      return;
-    }
+    // if (!id) {
+    //   sessionStorage.setItem("redirectAfterLogin", `/users/book/${id}`);
+    //   alert("Please login to book a room.");
+    //   navigate("/login", { replace: true }); // use replace to avoid login page in history
+    //   return;
+    // }
 
     if (!duration || duration <= 0) return alert("Select valid duration");
     if (!startDate || !endDate) return alert("Invalid start or end date");
 
     await API.post("/bookings/apply", {
-      user: { id: userId },
-      room: { id },
+      room: { id: room.id },
       amount,
       duration,
       startDate,

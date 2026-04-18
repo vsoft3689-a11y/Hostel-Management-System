@@ -2,9 +2,12 @@ package com.hostel.management.controller;
 
 import com.hostel.management.model.Booking;
 import com.hostel.management.model.Room;
+import com.hostel.management.model.User;
 import com.hostel.management.repository.BookingRepository;
 import com.hostel.management.repository.RoomRepository;
+import com.hostel.management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +15,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bookings")
 public class BookingController {
+
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private BookingRepository bookingRepository;
     @Autowired
@@ -19,26 +25,15 @@ public class BookingController {
 
     // User applies
     @PostMapping("/apply")
-    public Booking applyBooking(@RequestBody Booking booking) {
+    public Booking applyBooking(@RequestBody Booking booking, Authentication auth) {
+        booking.setUser(userRepository.findByEmail(auth.getName()));
+        booking.setRoom(roomRepository.findById(booking.getRoom().getId()).orElse(null));
+        booking.setAmount(booking.getAmount());
+        booking.setStartDate(booking.getStartDate());
+        booking.setEndDate(booking.getEndDate());
         booking.setStatus("pending");
         booking.setPaymentStatus("unpaid");
         return bookingRepository.save(booking);
-    }
-
-    // Admin approves booking
-    @PostMapping("/approve/{bookingId}")
-    public Booking approveBooking(@PathVariable Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElse(null);
-        if (booking != null && booking.getStatus().equals("pending")) {
-            Room room = booking.getRoom();
-            if (room.getOccupied() < room.getCapacity()) {
-                booking.setStatus("approved");
-            } else {
-                booking.setStatus("rejected");
-            }
-            return bookingRepository.save(booking);
-        }
-        return null;
     }
 
     // User pays
@@ -56,9 +51,13 @@ public class BookingController {
         return null;
     }
 
-    @GetMapping
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    // User bookings
+    @GetMapping("/my")
+    public List<Booking> getMyBookings(Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName());
+        return bookingRepository.findByUserId(user.getId());
     }
+
+
 }
 

@@ -6,17 +6,18 @@ export default function AdminUsers() {
   const [users, setUsers] = useState([]);
 
   const fetchUsers = async () => {
-    const res = await API.get("/users");
-    console.log(res.data);
-    const users = res.data.filter((n) => n.role !== "admin");
-    console.log(users);
-    setUsers(users);
+    try {
+      const res = await API.get("/admin/users");
+      const users = res.data.filter((n) => n.role !== "ADMIN");
+      setUsers(users);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
-
   return (
     <div className="adminusers-container">
       <div className="adminusers-card">
@@ -38,7 +39,7 @@ export default function AdminUsers() {
                 </thead>
                 <tbody>
                   {users.map((u) => (
-                    <tr key={u.id}>
+                    <tr key={u.email}>
                       {/* <td>{u.id}</td> */}
                       <td>{u.name}</td>
                       <td>{u.email}</td>

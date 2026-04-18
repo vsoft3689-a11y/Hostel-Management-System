@@ -11,14 +11,14 @@ export default function AdminHostelInfo() {
   const [items, setItems] = useState([]);
 
   const fetchItems = () => {
-    API.get(`hostel-info/${type}`)
+    API.get(`/admin/hostel-info/${type}`)
       .then((res) => setItems(res.data))
       .catch((err) => console.log(err));
   };
 
   useEffect(() => {
     fetchItems();
-    // Clear inputs when type changes
+
     setMeal("");
     setMenu("");
     setTimings("");
@@ -35,7 +35,7 @@ export default function AdminHostelInfo() {
       payload.data = data;
     }
 
-    API.post("/hostel-info/add", payload)
+    API.post("/admin/hostel-info/add", payload)
       .then((res) => {
         alert("Added successfully!");
         setMeal("");
@@ -48,7 +48,7 @@ export default function AdminHostelInfo() {
   };
 
   const handleDelete = (id) => {
-    API.delete(`/hostel-info/delete/${id}`)
+    API.delete(`/admin/hostel-info/delete/${id}`)
       .then(() => fetchItems())
       .catch((err) => console.log(err));
   };

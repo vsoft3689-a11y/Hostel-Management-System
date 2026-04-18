@@ -1,17 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import API from "../api";
 import "../App.css";
-import { AuthContext } from "./AuthContext";
 
 export default function UserBookings() {
   const [bookings, setBookings] = useState([]);
-  const { token, role } = useContext(AuthContext);
-  // const userId = localStorage.getItem("userId");
-  const userId = token;
 
   const fetchBookings = async () => {
-    const res = await API.get("/bookings");
-    setBookings(res.data.filter((b) => b.user.id == userId));
+    const res = await API.get("/bookings/my");
+    setBookings(res.data);
   };
 
   useEffect(() => {
@@ -23,7 +19,7 @@ export default function UserBookings() {
     alert("Payment successful!");
     fetchBookings();
   };
-console.log(bookings)
+
   return (
     <div className="userbookings-page">
       <div className="userbookings-container">
@@ -55,8 +51,8 @@ console.log(bookings)
                         b.status === "approved"
                           ? "approved"
                           : b.status === "pending"
-                          ? "pending"
-                          : "rejected"
+                            ? "pending"
+                            : "rejected"
                       }`}
                     >
                       {b.status}

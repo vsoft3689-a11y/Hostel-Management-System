@@ -6,7 +6,7 @@ export default function AdminComplaints() {
   const [complaints, setComplaints] = useState([]);
 
   const fetchComplaints = async () => {
-    const res = await API.get("/complaints");
+    const res = await API.get("/admin/complaints");
     setComplaints(res.data);
   };
 
@@ -15,7 +15,7 @@ export default function AdminComplaints() {
   }, []);
 
   const resolveComplaint = async (id) => {
-    await API.put(`/complaints/resolve/${id}`);
+    await API.put(`/admin/complaints/resolve/${id}`);
     fetchComplaints();
   };
 

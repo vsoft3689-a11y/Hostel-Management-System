@@ -10,22 +10,22 @@ export default function About() {
 
   useEffect(() => {
     // Fetch Food Menu
-    API.get("http://localhost:8080/api/hostel-info/food")
+    API.get("/hostel-info/food")
       .then(res => setFoodMenu(res.data))
       .catch(err => console.log(err));
 
     // Fetch Hostel Timings
-    API.get("http://localhost:8080/api/hostel-info/timings")
+    API.get("/hostel-info/timings")
       .then(res => setHostelTimings(res.data))
       .catch(err => console.log(err));
 
     // Fetch Facilities
-    API.get("http://localhost:8080/api/hostel-info/facilities")
+    API.get("/hostel-info/facilities")
       .then(res => setFacilities(res.data))
       .catch(err => console.log(err));
 
     // Fetch Rules
-    API.get("http://localhost:8080/api/hostel-info/rules")
+    API.get("/hostel-info/rules")
       .then(res => setRules(res.data))
       .catch(err => console.log(err));
   }, []);
