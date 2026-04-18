@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -22,6 +23,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -38,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 String username = jwtUtil.extractUsername(token);
 
                 String role = Jwts.parserBuilder()
-                        .setSigningKey(Keys.hmacShaKeyFor("mysecretkeymysecretkeymysecretkey".getBytes()))
+                        .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
                         .build()
                         .parseClaimsJws(token)
                         .getBody()
